@@ -1,11 +1,16 @@
-package ru.praktikum.pageObjects;
+package ru.praktikum.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import java.time.Duration;
 
-public class OrderPage extends HomePage {
-    // локаторы для первой страницы заказа
+public class OrderPage {
+    private final WebDriver driver;
+
+    // локаторы для 1 стр. заказа
     private final By nameField = By.xpath(".//input[@placeholder='* Имя']");
     private final By surnameField = By.xpath(".//input[@placeholder='* Фамилия']");
     private final By addressField = By.xpath(".//input[@placeholder='* Адрес: куда привезти заказ']");
@@ -14,7 +19,7 @@ public class OrderPage extends HomePage {
     private final By firstMetroStation = By.xpath(".//div[@class='select-search__select']//div[1]");
     private final By nextButton = By.xpath(".//button[text()='Далее']");
 
-    // локаторы для второй страницы заказа
+    // локаторы для 2 стр. заказа
     private final By dateField = By.xpath(".//input[@placeholder='* Когда привезти самокат']");
     private final By todayDate = By.xpath(".//div[contains(@class, 'react-datepicker__day--today')]");
     private final By rentalPeriodDropdown = By.className("Dropdown-arrow");
@@ -27,39 +32,107 @@ public class OrderPage extends HomePage {
     private final By successMessage = By.xpath(".//div[contains(text(), 'Заказ оформлен')]");
 
     public OrderPage(WebDriver driver) {
-        super(driver);
+        this.driver = driver;
     }
 
-    public void fillFirstPage(String name, String surname, String address, String phone) {
-        sendKeysToElement(nameField, name);
-        sendKeysToElement(surnameField, surname);
-        sendKeysToElement(addressField, address);
-        sendKeysToElement(phoneField, phone);
+    // базовые методы
+    private WebElement waitForElementToBeVisible(By locator) {
+        return new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(locator));
+    }
 
+    private void waitForElementToBeClickable(By locator) {
+        new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.elementToBeClickable(locator));
+    }
+
+    private void clickElement(By locator) {
+        waitForElementToBeClickable(locator);
+        driver.findElement(locator).click();
+    }
+
+    private void sendKeysToElement(By locator, String text) {
+        WebElement element = waitForElementToBeVisible(locator);
+        element.clear();
+        element.sendKeys(text);
+    }
+
+    // методы для работы с полями формы
+    public void enterName(String name) {
+        sendKeysToElement(nameField, name);
+    }
+
+    public void enterSurname(String surname) {
+        sendKeysToElement(surnameField, surname);
+    }
+
+    public void enterAddress(String address) {
+        sendKeysToElement(addressField, address);
+    }
+
+    public void enterPhone(String phone) {
+        sendKeysToElement(phoneField, phone);
+    }
+
+    public void selectMetroStation() {
         clickElement(metroField);
         clickElement(firstMetroStation);
+    }
+
+    public void clickNextButton() {
         clickElement(nextButton);
     }
 
-    public void fillSecondPage(String color, String comment) {
+    public void selectDeliveryDate() {
         clickElement(dateField);
         clickElement(todayDate);
+    }
 
+    public void selectRentalPeriod() {
         clickElement(rentalPeriodDropdown);
         clickElement(oneDayPeriod);
+    }
 
-        if (color.equals("black")) {
+    public void selectScooterColor(String color) {
+        if ("black".equals(color)) {
             clickElement(blackColorCheckbox);
         } else {
             clickElement(greyColorCheckbox);
         }
+    }
 
+    public void enterComment(String comment) {
         sendKeysToElement(commentField, comment);
+    }
+
+    public void clickOrderButton() {
         clickElement(orderButton);
+    }
+
+    public void confirmOrder() {
         clickElement(confirmButton);
     }
 
-    public boolean isOrderSuccess() {
+    // оформление заказа
+    public void fillFirstOrderPage(String name, String surname, String address, String phone) {
+        enterName(name);
+        enterSurname(surname);
+        enterAddress(address);
+        enterPhone(phone);
+        selectMetroStation();
+        clickNextButton();
+    }
+
+    public void fillSecondOrderPage(String color, String comment) {
+        selectDeliveryDate();
+        selectRentalPeriod();
+        selectScooterColor(color);
+        enterComment(comment);
+        clickOrderButton();
+        confirmOrder();
+    }
+
+    public boolean isOrderSuccessful() {
         WebElement message = waitForElementToBeVisible(successMessage);
         return message.isDisplayed();
     }
