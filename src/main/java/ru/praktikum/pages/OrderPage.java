@@ -35,7 +35,6 @@ public class OrderPage {
         this.driver = driver;
     }
 
-    // базовые методы
     private WebElement waitForElementToBeVisible(By locator) {
         return new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOfElementLocated(locator));
@@ -57,64 +56,13 @@ public class OrderPage {
         element.sendKeys(text);
     }
 
-    // методы для работы с полями формы
-    public void enterName(String name) {
-        sendKeysToElement(nameField, name);
+    public void fillOrderForm(String name, String surname, String address,
+                              String phone, String color, String comment) {
+        fillFirstOrderPage(name, surname, address, phone);
+        fillSecondOrderPage(color, comment);
     }
 
-    public void enterSurname(String surname) {
-        sendKeysToElement(surnameField, surname);
-    }
-
-    public void enterAddress(String address) {
-        sendKeysToElement(addressField, address);
-    }
-
-    public void enterPhone(String phone) {
-        sendKeysToElement(phoneField, phone);
-    }
-
-    public void selectMetroStation() {
-        clickElement(metroField);
-        clickElement(firstMetroStation);
-    }
-
-    public void clickNextButton() {
-        clickElement(nextButton);
-    }
-
-    public void selectDeliveryDate() {
-        clickElement(dateField);
-        clickElement(todayDate);
-    }
-
-    public void selectRentalPeriod() {
-        clickElement(rentalPeriodDropdown);
-        clickElement(oneDayPeriod);
-    }
-
-    public void selectScooterColor(String color) {
-        if ("black".equals(color)) {
-            clickElement(blackColorCheckbox);
-        } else {
-            clickElement(greyColorCheckbox);
-        }
-    }
-
-    public void enterComment(String comment) {
-        sendKeysToElement(commentField, comment);
-    }
-
-    public void clickOrderButton() {
-        clickElement(orderButton);
-    }
-
-    public void confirmOrder() {
-        clickElement(confirmButton);
-    }
-
-    // оформление заказа
-    public void fillFirstOrderPage(String name, String surname, String address, String phone) {
+    private void fillFirstOrderPage(String name, String surname, String address, String phone) {
         enterName(name);
         enterSurname(surname);
         enterAddress(address);
@@ -123,7 +71,7 @@ public class OrderPage {
         clickNextButton();
     }
 
-    public void fillSecondOrderPage(String color, String comment) {
+    private void fillSecondOrderPage(String color, String comment) {
         selectDeliveryDate();
         selectRentalPeriod();
         selectScooterColor(color);
@@ -132,8 +80,63 @@ public class OrderPage {
         confirmOrder();
     }
 
-    public boolean isOrderSuccessful() {
-        WebElement message = waitForElementToBeVisible(successMessage);
-        return message.isDisplayed();
+    public void checkOrderSuccess() {
+        waitForElementToBeVisible(successMessage);
+    }
+
+    // методы для работы с полями формы
+    private void enterName(String name) {
+        sendKeysToElement(nameField, name);
+    }
+
+    private void enterSurname(String surname) {
+        sendKeysToElement(surnameField, surname);
+    }
+
+    private void enterAddress(String address) {
+        sendKeysToElement(addressField, address);
+    }
+
+    private void enterPhone(String phone) {
+        sendKeysToElement(phoneField, phone);
+    }
+
+    private void selectMetroStation() {
+        clickElement(metroField);
+        clickElement(firstMetroStation);
+    }
+
+    private void clickNextButton() {
+        clickElement(nextButton);
+    }
+
+    private void selectDeliveryDate() {
+        clickElement(dateField);
+        clickElement(todayDate);
+    }
+
+    private void selectRentalPeriod() {
+        clickElement(rentalPeriodDropdown);
+        clickElement(oneDayPeriod);
+    }
+
+    private void selectScooterColor(String color) {
+        if ("black".equals(color)) {
+            clickElement(blackColorCheckbox);
+        } else {
+            clickElement(greyColorCheckbox);
+        }
+    }
+
+    private void enterComment(String comment) {
+        sendKeysToElement(commentField, comment);
+    }
+
+    private void clickOrderButton() {
+        clickElement(orderButton);
+    }
+
+    private void confirmOrder() {
+        clickElement(confirmButton);
     }
 }

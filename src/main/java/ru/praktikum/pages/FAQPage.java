@@ -9,7 +9,8 @@ public class FAQPage extends HomePage {
 
     // локаторы для FAQ
     private final By faqSection = By.className("Home_FAQ__3uVm4");
-    private final By faqAnswers = By.cssSelector(".accordion__panel");
+    private final By faqQuestion = By.cssSelector("[id^='accordion__heading-']");
+    private final By faqAnswer = By.cssSelector("[id^='accordion__panel-']");
 
     public FAQPage(WebDriver driver) {
         super(driver);

@@ -22,6 +22,7 @@ public class BaseTest {
         driver = new ChromeDriver(options);
         homePage = new HomePage(driver);
         homePage.open();
+        homePage.clickCookieButton();
         faqPage = new FAQPage(driver);
     }
 
